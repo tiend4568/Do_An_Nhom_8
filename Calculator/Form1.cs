@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static System.Windows.Forms.DataFormats;
 
 namespace Calculator
 {
@@ -23,11 +24,18 @@ namespace Calculator
             // Khởi tạo và thêm ListBox cho lịch sử
             historyListBox = new ListBox();
             historyListBox.Visible = false; // Ban đầu ẩn
-            historyListBox.Location = new System.Drawing.Point(550, 100); // Điều chỉnh vị trí theo nhu cầu
-            historyListBox.Size = new System.Drawing.Size(200, 400); // Điều chỉnh kích thước theo nhu cầu
+            historyListBox.Location = new System.Drawing.Point(this.ClientSize.Width, 0); // Điều chỉnh vị trí theo nhu cầu
+            historyListBox.Size = new System.Drawing.Size(this.ClientSize.Width - 400, this.ClientSize.Height); // Điều chỉnh kích thước theo nhu cầu
             historyListBox.Font = new System.Drawing.Font("Arial", 14); // Thay đổi kích cỡ font chữ
             historyListBox.Click += new EventHandler(HistoryListBox_Click); // Thêm sự kiện Click
             this.Controls.Add(historyListBox);
+            // Đăng ký sự kiện Resize
+            this.Resize += new EventHandler(Form1_Resize);
+        }
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            // Điều chỉnh kích thước của ListBox khi form thay đổi kích thước
+            historyListBox.Size = new Size(this.ClientSize.Width - 400, this.ClientSize.Height);
         }
         private void ResBox_TextChanged(object sender, EventArgs e)
         {
@@ -273,26 +281,25 @@ namespace Calculator
             }
             return expression;
         }
-
         private void HistoryBtn_Click(object sender, EventArgs e)
         {
             // Chuyển đổi hiển thị của ListBox lịch sử
             historyListBox.Visible = !historyListBox.Visible;
-
+            Form1 form1 = new Form1();
             // Mở rộng hoặc thu nhỏ form
             if (isFormExpanded)
             {
                 HistoryBtn.Text = "Hiện lịch sử tính";
-                this.Size = new System.Drawing.Size(547, 557); // Kích thước ban đầu của form
+
+                this.Size = new System.Drawing.Size(form1.Size.Width, form1.Size.Height); // Kích thước ban đầu của form
             }
             else
             {
                 HistoryBtn.Text = "Ẩn lịch sử tính";
-                this.Size = new System.Drawing.Size(800, 557); // Kích thước mở rộng của form
+                this.Size = new System.Drawing.Size(form1.Size.Width+300, form1.Size.Height); // Kích thước giảm của form
             }
             isFormExpanded = !isFormExpanded; // Đảo ngược trạng thái mở rộng
         }
-
         private void UpdateHistory()
         {
             // Cập nhật ListBox với các kết quả
